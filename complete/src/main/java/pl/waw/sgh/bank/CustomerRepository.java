@@ -1,4 +1,4 @@
-package hello;
+package pl.waw.sgh.bank;
 
 import java.util.List;
 
