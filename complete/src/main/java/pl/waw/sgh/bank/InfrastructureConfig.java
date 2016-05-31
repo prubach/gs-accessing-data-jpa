@@ -57,7 +57,7 @@ public class InfrastructureConfig {
 	public DataSource persistentDataSource() {		
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.h2.Driver");
-		dataSource.setUrl("jdbc:h2:~/test;create=true");
+		dataSource.setUrl("jdbc:h2:c:/temp/test;create=true");
 		dataSource.setUsername("sa");
 		dataSource.setPassword("");
 		//EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();

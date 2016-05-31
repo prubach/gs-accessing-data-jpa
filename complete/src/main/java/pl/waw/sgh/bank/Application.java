@@ -20,7 +20,7 @@ public class Application {
 		SpringApplication.run(Application.class);
 	}
 
-	@Bean
+	//@Bean
 	public CommandLineRunner demo(CustomerRepository repository, AccountRepository accountRepository) {
 		return (args) -> {
 			// save a couple of customers
