@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 public class PlayWithBank {
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
 
         Bank bank = new Bank();
         Customer c1 = bank.createCustomer("John", "Smith");
@@ -37,5 +37,5 @@ public class PlayWithBank {
             System.out.println(be.getMessage());
         }
         System.out.println(bank);
-    }
+    }*/
 }
