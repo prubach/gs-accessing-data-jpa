@@ -78,6 +78,15 @@ public class Application {
 				log.info(bauer.toString());
 			}
             log.info("");
+			// fetch customers by last name
+			log.info("Customer found with findByLastNameStartsWithIgnoreCase('Bauer'):");
+			log.info("--------------------------------------------");
+			for (Customer bauer : repository
+					.findByLastNameStartsWithIgnoreCase("bau")) {
+				log.info(bauer.toString());
+			}
+			log.info("");
+
 		};
 	}
 
