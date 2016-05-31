@@ -33,20 +33,19 @@ public class AccountEditor extends VerticalLayout {
 	private Account account;
 
 	/* Fields to edit properties in account entity */
-	TextField customer = new TextField("Customer");
+	//TextField customer = new TextField("Customer");
 	TextField balance = new TextField("Balance");
 
 	/* Action buttons */
 	Button save = new Button("Save", FontAwesome.SAVE);
-	Button cancel = new Button("Cancel");
 	Button delete = new Button("Delete", FontAwesome.TRASH_O);
-	CssLayout actions = new CssLayout(save, cancel, delete);
+	CssLayout actions = new CssLayout(save, delete);
 
 	@Autowired
 	public AccountEditor(AccountRepository repository) {
 		this.repository = repository;
 
-		addComponents(customer, balance, actions);
+		addComponents(balance, actions);
 
 		// Configure and style components
 		setSpacing(true);
@@ -57,7 +56,6 @@ public class AccountEditor extends VerticalLayout {
 		// wire action buttons to save, delete and reset
 		save.addClickListener(e -> repository.save(account));
 		delete.addClickListener(e -> repository.delete(account));
-		cancel.addClickListener(e -> editAccount(account));
 		setVisible(false);
 	}
 
@@ -75,7 +73,6 @@ public class AccountEditor extends VerticalLayout {
 		else {
 			account = c;
 		}
-		cancel.setVisible(persisted);
 
 		// Bind account properties to similarly named fields
 		// Could also use annotation or "manual binding" or programmatically
@@ -87,7 +84,7 @@ public class AccountEditor extends VerticalLayout {
 		// A hack to ensure the whole form is visible
 		save.focus();
 		// Select all text in firstName field automatically
-		firstName.selectAll();
+		//customer.selectAll();
 	}
 
 	public void setChangeHandler(ChangeHandler h) {

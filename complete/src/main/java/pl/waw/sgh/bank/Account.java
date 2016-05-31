@@ -20,6 +20,8 @@ public abstract class Account {
 
     private BigDecimal balance;
 
+    private boolean savings;
+
     public Account() {
     }
 
@@ -32,6 +34,12 @@ public abstract class Account {
     public Account(Customer customer) {
         this.customer = customer;
         this.balance = new BigDecimal(0);
+    }
+
+    public Account(Customer customer, boolean savings) {
+        this.customer = customer;
+        this.balance = new BigDecimal(0);
+        this.savings = savings;
     }
 
     public Long getAccountID() {
@@ -59,6 +67,14 @@ public abstract class Account {
         this.balance = balance;
     }
 
+    public boolean isSavings() {
+        return savings;
+    }
+
+    public void setSavings(boolean savings) {
+        this.savings = savings;
+    }
+
     public void deposit(BigDecimal amount) throws IllegalDataException {
         if (amount.compareTo(new BigDecimal(0))<=0)
             throw new IllegalDataException(
@@ -84,6 +100,7 @@ public abstract class Account {
         return this.getClass().getSimpleName()
                 .replace("Account", "") + "{" +
                 "ID=" + accountID +
+                "sav=" + savings +
                 ", " + balance.setScale(2,BigDecimal.ROUND_HALF_EVEN) +
                 ", cust=" + customer.getLastName() +
                 '}';
