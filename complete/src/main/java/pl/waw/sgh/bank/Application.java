@@ -16,8 +16,7 @@ public class Application {
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String[] args) {
-		ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-		SpringApplication.run(Application.class);
+		SpringApplication.run(Application.class, args);
 	}
 
 	//@Bean

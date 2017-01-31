@@ -10,7 +10,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'gs-accessing-data-jpa'
@@ -32,6 +32,3 @@ dependencies {
     testCompile("junit:junit")
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
-}
