@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.3.RELEASE")
         classpath "io.spring.gradle:dependency-management-plugin:1.0.0.RELEASE"
     }
 }
@@ -16,7 +16,7 @@ apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'gs-crud-with-vaadin'
-    version =  '0.1.0'
+    version =  '0.1.1'
 }
 
 repositories {
@@ -30,7 +30,7 @@ targetCompatibility = 1.8
 
 dependencyManagement {
     imports {
-        mavenBom 'com.vaadin:vaadin-bom:7.7.6'
+        mavenBom 'com.vaadin:vaadin-bom:7.7.9'
     }
 }
 
