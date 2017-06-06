@@ -1,6 +1,8 @@
 package pl.waw.sgh.bank;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.BeanValidationBinder;
+import com.vaadin.data.Binder;
+import com.vaadin.data.converter.StringToBigDecimalConverter;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -77,7 +79,10 @@ public class AccountEditor extends VerticalLayout {
 		// Bind account properties to similarly named fields
 		// Could also use annotation or "manual binding" or programmatically
 		// moving values from fields to entities before saving
-		BeanFieldGroup.bindFieldsUnbuffered(account, this);
+		Binder<Account> accBinder = new Binder<Account>(Account.class);
+		accBinder.readBean(account);
+		accBinder.forField(balance).withConverter(new StringToBigDecimalConverter("Must be a number"));
+		//accBinder.bindInstanceFields(this);
 
 		setVisible(true);
 

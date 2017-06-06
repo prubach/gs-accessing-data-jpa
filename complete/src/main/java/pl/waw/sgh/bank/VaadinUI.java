@@ -1,15 +1,10 @@
 package pl.waw.sgh.bank;
 
-import com.sun.javafx.css.converters.BooleanConverter;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.vaadin.data.util.converter.StringToBooleanConverter;
-import com.vaadin.ui.renderers.ImageRenderer;
-import com.vaadin.ui.renderers.Renderer;
+import com.vaadin.data.provider.ListDataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.vaadin.annotations.Theme;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -54,8 +49,8 @@ public class VaadinUI extends UI {
 		this.editor = editor;
 		this.accountRepo = accountRepo;
 		this.accountEditor = accountEditor;
-		this.grid = new Grid();
-		this.accountGrid = new Grid();
+		this.grid = new Grid(Customer.class);
+		this.accountGrid = new Grid(Account.class);
 		this.filter = new TextField();
 		this.addNewBtn = new Button("New customer", FontAwesome.PLUS);
 		this.addNewDebitAccountBtn = new Button("New debit account", FontAwesome.PLUS);
@@ -94,32 +89,34 @@ public class VaadinUI extends UI {
 
 		//accountGrid.getColumn("savings").setRenderer(new ImageRenderer());
 		
-		filter.setInputPrompt("Filter by last name");
+		filter.setPlaceholder("Filter by last name");
 
 		// Hook logic to components
 
 		// Replace listing with filtered content when user changes filter
-		filter.addTextChangeListener(e -> listCustomers(e.getText()));
+		filter.addValueChangeListener(e -> listCustomers(e.getValue()));
 
 		// Connect selected Customer to editor or hide if none is selected
 		grid.addSelectionListener(e -> {
-			if (e.getSelected().isEmpty()) {
+			if (e.getAllSelectedItems().isEmpty()) {
 				editor.setVisible(false);
 				listAccounts(null);
 			}
 			else {
-				editor.editCustomer((Customer) grid.getSelectedRow());
-				listAccounts((Customer) grid.getSelectedRow());
+				Customer selCust = new ArrayList<Customer>(grid.getSelectedItems()).get(0);
+				editor.editCustomer(selCust);
+				listAccounts(selCust);
 			}
 		});
 
 
 		accountGrid.addSelectionListener(e -> {
-			if (e.getSelected().isEmpty()) {
+			if (e.getAllSelectedItems().isEmpty()) {
 				accountEditor.setVisible(false);
 			}
 			else {
-				accountEditor.editAccount((Account) accountGrid.getSelectedRow());
+				Account selAcc = new ArrayList<Account>(accountGrid.getSelectedItems()).get(0);
+				accountEditor.editAccount(selAcc);
 			}
 		});
 
@@ -127,10 +124,10 @@ public class VaadinUI extends UI {
 		addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "")));
 
 		addNewDebitAccountBtn.addClickListener(e -> accountEditor.editAccount(
-				new DebitAccount((Customer) grid.getSelectedRow())));
+				new DebitAccount(new ArrayList<Customer>(grid.getSelectedItems()).get(0))));
 
 		addNewSavingsAccountBtn.addClickListener(e -> accountEditor.editAccount(
-				new SavingsAccount((Customer) grid.getSelectedRow())));
+				new SavingsAccount(new ArrayList<Customer>(grid.getSelectedItems()).get(0))));
 
 		// Listen changes made by the editor, refresh data from backend
 		editor.setChangeHandler(() -> {
@@ -141,25 +138,25 @@ public class VaadinUI extends UI {
 		// Listen changes made by the editor, refresh data from backend
 		accountEditor.setChangeHandler(() -> {
 			accountEditor.setVisible(false);
-			listAccounts((Customer) grid.getSelectedRow());
+			listAccounts(new ArrayList<Customer>(grid.getSelectedItems()).get(0));
 			//listCustomers(filter.getValue());
 		});
-
 
 		// Initialize listing
 		listCustomers(null);
 		listAccounts(null);
+
 	}
 
 	// tag::listCustomers[]
 	private void listCustomers(String text) {
 		if (StringUtils.isEmpty(text)) {
-			grid.setContainerDataSource(
-					new BeanItemContainer(Customer.class, repo.findAll()));
+			grid.setDataProvider(
+					new ListDataProvider<Customer>(repo.findAll()));
 			newAccountsLayout.setVisible(false);
 		}
 		else {
-			grid.setContainerDataSource(new BeanItemContainer(Customer.class,
+			grid.setDataProvider(new ListDataProvider<Customer>(
 					repo.findByLastNameStartsWithIgnoreCase(text)));
 			newAccountsLayout.setVisible(false);
 		}
@@ -170,12 +167,12 @@ public class VaadinUI extends UI {
 	// tag::listAccounts[]
 	private void listAccounts(Customer owner) {
 		if (owner==null) {
-			accountGrid.setContainerDataSource(
-					new BeanItemContainer(Account.class, new ArrayList<Account>()));
+			accountGrid.setDataProvider(
+					new ListDataProvider<Account>(new ArrayList<Account>()));
 		}
 		else {
-			accountGrid.setContainerDataSource(new BeanItemContainer(Account.class,
-					accountRepo.findByCustomer(owner)));
+			accountGrid.setDataProvider((new ListDataProvider<Account>(
+					accountRepo.findByCustomer(owner))));
 			newAccountsLayout.setVisible(true);
 		}
 	}
