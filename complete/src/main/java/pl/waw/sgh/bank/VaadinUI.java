@@ -53,8 +53,8 @@ public class VaadinUI extends UI {
 		this.accountGrid = new Grid(Account.class);
 		this.filter = new TextField();
 		this.addNewBtn = new Button("New customer", FontAwesome.PLUS);
-		this.addNewDebitAccountBtn = new Button("New debit account", FontAwesome.PLUS);
-		this.addNewSavingsAccountBtn = new Button("New savings account", FontAwesome.PLUS);
+		this.addNewDebitAccountBtn = new Button("New Debit", FontAwesome.PLUS);
+		this.addNewSavingsAccountBtn = new Button("New Savings", FontAwesome.PLUS);
 	}
 
 	@Override
@@ -82,9 +82,11 @@ public class VaadinUI extends UI {
 		mainLayout.setSpacing(true);
 
 		grid.setHeight(300, Unit.PIXELS);
+		grid.setWidth(350, Unit.PIXELS);
 		grid.setColumns("customerID", "firstName", "lastName");
 
 		accountGrid.setHeight(300, Unit.PIXELS);
+		accountGrid.setWidth(350, Unit.PIXELS);
 		accountGrid.setColumns("accountID", "savings", "balance");
 
 		//accountGrid.getColumn("savings").setRenderer(new ImageRenderer());
