@@ -1,16 +1,13 @@
 package pl.waw.sgh.bank;
 
-import com.vaadin.data.BeanValidationBinder;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToBigDecimalConverter;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,6 +34,7 @@ public class AccountEditor extends VerticalLayout {
 	/* Fields to edit properties in account entity */
 	//TextField customer = new TextField("Customer");
 	TextField balance = new TextField("Balance");
+	Binder<Account> accBinder;
 
 	/* Action buttons */
 	Button save = new Button("Save", FontAwesome.SAVE);
@@ -56,7 +54,14 @@ public class AccountEditor extends VerticalLayout {
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		// wire action buttons to save, delete and reset
-		save.addClickListener(e -> repository.save(account));
+		save.addClickListener(e -> {
+					try {
+						accBinder.writeBean(account);
+						repository.save(account);
+					} catch (ValidationException ve) {
+						Notification.show("Problem validating account " + ve.getMessage());
+					}
+		});
 		delete.addClickListener(e -> repository.delete(account));
 		setVisible(false);
 	}
@@ -79,10 +84,10 @@ public class AccountEditor extends VerticalLayout {
 		// Bind account properties to similarly named fields
 		// Could also use annotation or "manual binding" or programmatically
 		// moving values from fields to entities before saving
-		Binder<Account> accBinder = new Binder<Account>(Account.class);
+		accBinder = new Binder<>(Account.class);
+		accBinder.forField(balance).withConverter(new StringToBigDecimalConverter("Must be a number"))
+				.bind(Account::getBalance, Account::setBalance);
 		accBinder.readBean(account);
-		accBinder.forField(balance).withConverter(new StringToBigDecimalConverter("Must be a number"));
-		//accBinder.bindInstanceFields(this);
 
 		setVisible(true);
 

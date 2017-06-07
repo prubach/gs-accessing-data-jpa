@@ -1,16 +1,14 @@
 package pl.waw.sgh.bank;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
+import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -36,6 +34,7 @@ public class CustomerEditor extends VerticalLayout {
 	/* Fields to edit properties in Customer entity */
 	TextField firstName = new TextField("First name");
 	TextField lastName = new TextField("Last name");
+	Binder<Customer> customerBinder;
 
 	/* Action buttons */
 	Button save = new Button("Save", FontAwesome.SAVE);
@@ -56,7 +55,14 @@ public class CustomerEditor extends VerticalLayout {
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		// wire action buttons to save, delete and reset
-		save.addClickListener(e -> repository.save(customer));
+		save.addClickListener(e -> {
+			try {
+				customerBinder.writeBean(customer);
+				repository.save(customer);
+			} catch (ValidationException ve) {
+				Notification.show("Problem validating customer " + ve.getMessage());
+			}
+		});
 		delete.addClickListener(e -> repository.delete(customer));
 		cancel.addClickListener(e -> editCustomer(customer));
 		setVisible(false);
@@ -82,10 +88,9 @@ public class CustomerEditor extends VerticalLayout {
 		// Could also use annotation or "manual binding" or programmatically
 		// moving values from fields to entities before saving
 
-		Binder<Customer> customerBinder = new Binder<Customer>(Customer.class);
+		customerBinder = new Binder<>(Customer.class);
 		customerBinder.bindInstanceFields(this);
 		customerBinder.readBean(customer);
-		//BeanFieldGroup.bindFieldsUnbuffered(customer, this);
 
 		setVisible(true);
 
