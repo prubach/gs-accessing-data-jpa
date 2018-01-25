@@ -4,10 +4,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -24,19 +21,30 @@ public class VaadinUI extends UI {
 
     private final Grid accountGrid;
 
+    private final CustomerEditor custEditor;
+
+    private final AccountEditor accEditor;
+
     @Autowired
-    public VaadinUI(CustomerRepository custRepo, AccountRepository accRepo) {
+    public VaadinUI(CustomerRepository custRepo, CustomerEditor customerEditor, AccountRepository accRepo, AccountEditor accountEditor) {
         this.custRepo = custRepo;
         this.accRepo = accRepo;
         this.grid = new Grid(Customer.class);
         this.accountGrid = new Grid(Account.class);
+        this.custEditor = customerEditor;
+        this.accEditor = accountEditor;
     }
 
     @Override
     protected void init(VaadinRequest request) {
         Label myFirstlabel = new Label("Hello world");
-        VerticalLayout customerLayout = new VerticalLayout(myFirstlabel, grid, accountGrid);
-        setContent(customerLayout);
+
+        VerticalLayout customerLayout = new VerticalLayout(myFirstlabel, grid, custEditor);
+
+        VerticalLayout accountsLayout = new VerticalLayout(accountGrid, accEditor);
+
+        HorizontalLayout mainLayout = new HorizontalLayout(customerLayout, accountsLayout);
+        setContent(mainLayout);
 
         grid.setHeight(300, Unit.PIXELS);
         grid.setColumns("customerID", "firstName", "lastName");
@@ -52,8 +60,29 @@ public class VaadinUI extends UI {
            } else {
                Customer customer = new ArrayList<Customer>(grid.getSelectedItems()).get(0);
                listAccounts(customer);
+               custEditor.editCustomer(customer);
            }
         });
+
+        accountGrid.addSelectionListener(e -> {
+            if (e.getAllSelectedItems().isEmpty()) {
+                accEditor.setVisible(false);
+            } else  {
+                Account selAcc = new ArrayList<Account>(accountGrid.getSelectedItems()).get(0);
+                accEditor.editAccount(selAcc);
+            }
+
+        });
+
+        custEditor.setChangeHandler(() -> {
+                    custEditor.setVisible(false);
+                    listCustomer();
+                });
+        accEditor.setChangeHandler(() -> {
+            accEditor.setVisible(false);
+            listAccounts(new ArrayList<Customer>(grid.getSelectedItems()).get(0));
+        });
+
 
     }
 
