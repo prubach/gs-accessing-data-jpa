@@ -20,6 +20,8 @@ public abstract class Account {
 
     private BigDecimal balance;
 
+    private boolean isSavings;
+
     public Account() {
     }
 
@@ -32,6 +34,14 @@ public abstract class Account {
     public Account(Customer customer) {
         this.customer = customer;
         this.balance = new BigDecimal(0);
+    }
+
+    public boolean isSavings() {
+        return isSavings;
+    }
+
+    public void setSavings(boolean savings) {
+        isSavings = savings;
     }
 
     public Long getAccountID() {

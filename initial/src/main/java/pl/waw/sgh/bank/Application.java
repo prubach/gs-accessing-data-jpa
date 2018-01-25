@@ -5,8 +5,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.List;
-
 @SpringBootApplication
 public class Application {
 
@@ -15,7 +13,7 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner demo(CustomerRespository custRepo, AccountRepository accRepo) {
+    public CommandLineRunner demo(CustomerRepository custRepo, AccountRepository accRepo) {
         return args -> {
             Customer kl1 = new Customer("John", "Brown");
             Customer kl2 = new Customer("Anne", "Smith");

@@ -14,6 +14,7 @@ public class SavingsAccount extends Account {
 
     public SavingsAccount(Long accountID, Customer customer) {
         super(accountID, customer);
+        setSavings(true);
     }
 
     public SavingsAccount(Customer customer) {

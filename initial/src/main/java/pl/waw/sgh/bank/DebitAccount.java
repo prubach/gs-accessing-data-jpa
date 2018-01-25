@@ -14,6 +14,7 @@ public class DebitAccount extends Account {
 
     public DebitAccount(Long accountID, Customer customer) {
         super(accountID, customer);
+        setSavings(false);
     }
 
 
