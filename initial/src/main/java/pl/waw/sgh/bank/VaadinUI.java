@@ -2,6 +2,7 @@ package pl.waw.sgh.bank;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
@@ -25,6 +26,14 @@ public class VaadinUI extends UI {
 
     private final AccountEditor accEditor;
 
+    private final Button addNewCustBtn;
+
+    private final Button addNewDebitAccBtn;
+
+    private final Button addNewSavingsAccBtn;
+
+    private HorizontalLayout newAccLayout;
+
     @Autowired
     public VaadinUI(CustomerRepository custRepo, CustomerEditor customerEditor, AccountRepository accRepo, AccountEditor accountEditor) {
         this.custRepo = custRepo;
@@ -33,15 +42,19 @@ public class VaadinUI extends UI {
         this.accountGrid = new Grid(Account.class);
         this.custEditor = customerEditor;
         this.accEditor = accountEditor;
+        this.addNewCustBtn = new Button("New Customer", FontAwesome.PLUS);
+        this.addNewDebitAccBtn = new Button("New debit acc", FontAwesome.PLUS);
+        this.addNewSavingsAccBtn = new Button("New savings acc", FontAwesome.PLUS);
     }
 
     @Override
     protected void init(VaadinRequest request) {
-        Label myFirstlabel = new Label("Hello world");
 
-        VerticalLayout customerLayout = new VerticalLayout(myFirstlabel, grid, custEditor);
+        VerticalLayout customerLayout = new VerticalLayout(addNewCustBtn, grid, custEditor);
 
-        VerticalLayout accountsLayout = new VerticalLayout(accountGrid, accEditor);
+        newAccLayout = new HorizontalLayout(addNewDebitAccBtn, addNewSavingsAccBtn);
+
+        VerticalLayout accountsLayout = new VerticalLayout(accountGrid, newAccLayout, accEditor);
 
         HorizontalLayout mainLayout = new HorizontalLayout(customerLayout, accountsLayout);
         setContent(mainLayout);
@@ -83,7 +96,23 @@ public class VaadinUI extends UI {
             listAccounts(new ArrayList<Customer>(grid.getSelectedItems()).get(0));
         });
 
+        addNewCustBtn.addClickListener(e -> {
+           custEditor.editCustomer(new Customer("",""));
+        });
 
+        addNewDebitAccBtn.addClickListener(e -> {
+            Account newAcc = new DebitAccount(getSelCustomer());
+            accEditor.editAccount(newAcc);
+        });
+
+        addNewSavingsAccBtn.addClickListener(e -> {
+            accEditor.editAccount(new SavingsAccount(getSelCustomer()));
+        });
+
+    }
+
+    private Customer getSelCustomer() {
+        return new ArrayList<Customer>(grid.getSelectedItems()).get(0);
     }
 
     private void listCustomer() {
