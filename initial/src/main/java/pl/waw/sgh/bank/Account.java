@@ -2,15 +2,20 @@ package pl.waw.sgh.bank;
 
 import pl.waw.sgh.bank.exceptions.IllegalDataException;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
  * Created by prubac on 4/15/2016.
  */
+@Entity
 public abstract class Account {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long accountID;
 
+    @ManyToOne
     private Customer customer;
 
     private BigDecimal balance;
