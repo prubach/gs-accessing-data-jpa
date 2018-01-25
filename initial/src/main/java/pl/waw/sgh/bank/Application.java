@@ -21,8 +21,14 @@ public class Application {
             Customer kl2 = new Customer("Anne", "Smith");
 
             System.out.println("Storing customers");
-            //custRepo.save(kl1);
-            //custRepo.save(kl2);
+            custRepo.save(kl1);
+            custRepo.save(kl2);
+
+            Account ac1 = new DebitAccount(kl1);
+            Account ac2 = new SavingsAccount(kl2);
+            accRepo.save(ac1);
+            accRepo.save(ac2);
+
 //            CustomerDao.getInstance().delete(3);
             //CustomerDao.getInstance().update(4, "Joanne", "D'Arch", "email");
 

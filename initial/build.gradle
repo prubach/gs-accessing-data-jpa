@@ -27,6 +27,9 @@ targetCompatibility = 1.8
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    // REST
+    compile("org.springframework.boot:spring-boot-starter-data-rest")
+    //
     compile("javax.xml.bind:jaxb-api:2.2.11")
     compile("com.h2database:h2")
     testCompile("junit:junit")
