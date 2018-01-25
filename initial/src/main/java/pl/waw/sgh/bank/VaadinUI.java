@@ -42,7 +42,7 @@ public class VaadinUI extends UI {
         grid.setColumns("customerID", "firstName", "lastName");
 
         accountGrid.setHeight(200, Unit.PIXELS);
-        accountGrid.setColumns("accountID", "isSavings", "balance");
+        accountGrid.setColumns("accountID", "savings", "balance");
         listCustomer();
         listAccounts(null);
 
@@ -53,7 +53,6 @@ public class VaadinUI extends UI {
                Customer customer = new ArrayList<Customer>(grid.getSelectedItems()).get(0);
                listAccounts(customer);
            }
-
         });
 
     }

@@ -20,7 +20,7 @@ public abstract class Account {
 
     private BigDecimal balance;
 
-    private boolean isSavings;
+    private Boolean savings = true;
 
     public Account() {
     }
@@ -37,11 +37,11 @@ public abstract class Account {
     }
 
     public boolean isSavings() {
-        return isSavings;
+        return savings;
     }
 
     public void setSavings(boolean savings) {
-        isSavings = savings;
+        this.savings = savings;
     }
 
     public Long getAccountID() {
