@@ -11,6 +11,9 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+
 /**
  * A simple example to introduce building forms. As your real application is
  * probably much more complicated than this example, you could re-use this form in
@@ -34,18 +37,22 @@ public class AccountEditor extends VerticalLayout {
 	/* Fields to edit properties in account entity */
 	//TextField customer = new TextField("Customer");
 	TextField balance = new TextField("Balance");
+	TextField transferDest = new TextField("Transfer To (Account ID)");
+	TextField transferBalance = new TextField("Transfer Balance");
+
 	Binder<Account> accBinder;
 
 	/* Action buttons */
 	Button save = new Button("Save", FontAwesome.SAVE);
 	Button delete = new Button("Delete", FontAwesome.TRASH_O);
-	CssLayout actions = new CssLayout(save, delete);
+	Button transfer = new Button("Transfer", FontAwesome.ANCHOR);
+	CssLayout actions = new CssLayout(save, delete, transfer);
 
 	@Autowired
 	public AccountEditor(AccountRepository repository) {
 		this.repository = repository;
 
-		addComponents(balance, actions);
+		addComponents(balance, transferDest, transferBalance, actions);
 
 		// Configure and style components
 		setSpacing(true);
@@ -63,6 +70,20 @@ public class AccountEditor extends VerticalLayout {
 					}
 		});
 		delete.addClickListener(e -> repository.delete(account));
+		transfer.addClickListener(e -> {
+			try {
+				Long toAccId = Long.parseLong(transferDest.getValue());
+				BigDecimal transferBal = new BigDecimal(transferBalance.getValue());
+				Account toAccount = repository.findOne(toAccId);
+				// No validation yet !!!
+				toAccount.setBalance(toAccount.getBalance().add(transferBal));
+				repository.save(toAccount);
+				account.setBalance(account.getBalance().subtract(transferBal));
+				repository.save(account);
+			} catch (NumberFormatException pe) {
+				Notification.show("Problem parsing the ID");
+			}
+		});
 		setVisible(false);
 	}
 
@@ -102,6 +123,7 @@ public class AccountEditor extends VerticalLayout {
 		// is clicked
 		save.addClickListener(e -> h.onChange());
 		delete.addClickListener(e -> h.onChange());
+		transfer.addClickListener(e -> h.onChange());
 	}
 
 }
