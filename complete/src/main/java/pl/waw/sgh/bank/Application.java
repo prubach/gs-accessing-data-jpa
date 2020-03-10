@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Optional;
+
 @SpringBootApplication
 public class Application {
 
@@ -64,7 +66,7 @@ public class Application {
 
 
 			// fetch an individual customer by ID
-			Customer customer = repository.findOne(1L);
+			Optional<Customer> customer = repository.findById(1L);
 			log.info("Customer found with findOne(1L):");
 			log.info("--------------------------------");
 			log.info(customer.toString());

@@ -1,34 +1,27 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
-    }
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+    id 'idea'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-
-jar {
-    baseName = 'gs-accessing-data-jpa'
-    version =  '0.1.1'
-}
+group = 'pl.waw.sgh'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
-    maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("javax.xml.bind:jaxb-api:2.2.11")
-    compile("com.h2database:h2")
-    testCompile("junit:junit")
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
+    implementation "javax.xml.bind:jaxb-api:2.2.11"
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
