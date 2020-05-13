@@ -1,9 +1,12 @@
-package pl.waw.sgh.bank;
+package pl.waw.sgh.bank.data;
+
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by prubac on 4/15/2016.
@@ -15,8 +18,12 @@ public class Customer {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long customerID;
 
+    @NotNull
+    @Length(min = 1, max = 32)
     private String firstName;
 
+    @NotNull
+    @Length(min = 1, max = 50)
     private String lastName;
 
     public Customer() {

@@ -1,18 +1,24 @@
-package pl.waw.sgh.bank;
+package pl.waw.sgh.bank.ui;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationException;
-import com.vaadin.data.converter.StringToBigDecimalConverter;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.waw.sgh.bank.data.Account;
+import pl.waw.sgh.bank.data.AccountRepository;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
+import java.util.Optional;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -43,22 +49,21 @@ public class AccountEditor extends VerticalLayout {
 	Binder<Account> accBinder;
 
 	/* Action buttons */
-	Button save = new Button("Save", FontAwesome.SAVE);
-	Button delete = new Button("Delete", FontAwesome.TRASH_O);
-	Button transfer = new Button("Transfer", FontAwesome.ANCHOR);
-	CssLayout actions = new CssLayout(save, delete, transfer);
+	Button save = new Button("Save", new Icon(VaadinIcon.SAFE));
+	Button delete = new Button("Delete", new Icon(VaadinIcon.TRASH));
+	Button transfer = new Button("Transfer", new Icon(VaadinIcon.ARROW_FORWARD));
+	HorizontalLayout actions = new HorizontalLayout(save, delete, transfer);
 
 	@Autowired
 	public AccountEditor(AccountRepository repository) {
 		this.repository = repository;
 
-		addComponents(balance, transferDest, transferBalance, actions);
+		add(balance, transferDest, transferBalance, actions);
 
 		// Configure and style components
 		setSpacing(true);
-		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+		//save.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		save.addClickShortcut(Key.SAVE);
 
 		// wire action buttons to save, delete and reset
 		save.addClickListener(e -> {
@@ -74,7 +79,8 @@ public class AccountEditor extends VerticalLayout {
 			try {
 				Long toAccId = Long.parseLong(transferDest.getValue());
 				BigDecimal transferBal = new BigDecimal(transferBalance.getValue());
-				Account toAccount = repository.findOne(toAccId);
+				Optional<Account> toAccountOpt = repository.findById(toAccId);
+				Account toAccount = toAccountOpt.get();
 				// No validation yet !!!
 				toAccount.setBalance(toAccount.getBalance().add(transferBal));
 				repository.save(toAccount);
@@ -96,7 +102,8 @@ public class AccountEditor extends VerticalLayout {
 		final boolean persisted = c.getAccountID() != null;
 		if (persisted) {
 			// Find fresh entity for editing
-			account = repository.findOne(c.getAccountID());
+			Optional<Account> toAccountOpt = repository.findById(c.getAccountID());
+			account = toAccountOpt.get();
 		}
 		else {
 			account = c;

@@ -1,4 +1,4 @@
-package pl.waw.sgh.bank;
+package pl.waw.sgh.bank.data;
 
 import javax.persistence.Entity;
 

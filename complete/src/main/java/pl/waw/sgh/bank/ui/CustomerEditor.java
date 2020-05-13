@@ -1,15 +1,22 @@
-package pl.waw.sgh.bank;
+package pl.waw.sgh.bank.ui;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationException;
-import com.vaadin.ui.*;
+
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.waw.sgh.bank.data.Customer;
+import pl.waw.sgh.bank.data.CustomerRepository;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.themes.ValoTheme;
+import java.util.Optional;
 
 /**
  * A simple example to introduce building forms. As your real application is
@@ -37,22 +44,19 @@ public class CustomerEditor extends VerticalLayout {
 	Binder<Customer> customerBinder;
 
 	/* Action buttons */
-	Button save = new Button("Save", FontAwesome.SAVE);
-	Button cancel = new Button("Cancel");
-	Button delete = new Button("Delete", FontAwesome.TRASH_O);
-	CssLayout actions = new CssLayout(save, cancel, delete);
+	Button save = new Button("Save", new Icon(VaadinIcon.SAFE));
+	Button delete = new Button("Delete", new Icon(VaadinIcon.TRASH));
+	Button cancel = new Button("Cancel", new Icon(VaadinIcon.CLOSE));
+	HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
 
 	@Autowired
 	public CustomerEditor(CustomerRepository repository) {
 		this.repository = repository;
 
-		addComponents(firstName, lastName, actions);
+		add(firstName, lastName, actions);
 
 		// Configure and style components
 		setSpacing(true);
-		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		// wire action buttons to save, delete and reset
 		save.addClickListener(e -> {
@@ -77,7 +81,8 @@ public class CustomerEditor extends VerticalLayout {
 		final boolean persisted = c.getCustomerID() != null;
 		if (persisted) {
 			// Find fresh entity for editing
-			customer = repository.findOne(c.getCustomerID());
+			Optional<Customer> cust = repository.findById(c.getCustomerID());
+			customer = cust.get();
 		}
 		else {
 			customer = c;
@@ -97,7 +102,7 @@ public class CustomerEditor extends VerticalLayout {
 		// A hack to ensure the whole form is visible
 		save.focus();
 		// Select all text in firstName field automatically
-		firstName.selectAll();
+		//firstName.selectAll();
 	}
 
 	public void setChangeHandler(ChangeHandler h) {
