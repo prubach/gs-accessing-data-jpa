@@ -29,3 +29,6 @@ build/
 accessingdataneo4j.db
 dependency-reduced-pom.xml
 README.html
+
+complete/node_modules
+initial/node_modules
