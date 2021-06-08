@@ -1,12 +1,22 @@
 version: "3"
 
 services:
-  web:
+  bankapp:
     build: .
-    image: "bankapp:0.1"
     ports:
       - "8080:8080"
     volumes:
       - ".:/io"
-#  mariadb:
-#    image: "redis:alpine"
+    depends_on:
+      - "mariadb"
+    command: sh -c "sleep 10 && java -jar build/libs/bankapp-0.1.0-SNAPSHOT.jar"
+
+  mariadb:
+    image: "mariadb:latest"
+    environment:
+      - MYSQL_ROOT_PASSWORD=mypass
+      - MYSQL_DATABASE=bank
+      - MYSQL_USER=bank
+      - MYSQL_PASSWORD=banksecret
+    ports:
+      - "3306:3306"
